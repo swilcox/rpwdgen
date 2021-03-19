@@ -79,3 +79,17 @@ fn main() {
     // call the actual program
     make_passphrase(input_filename, separator, num_words, capitalize, max_num);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_random_words() {
+        let words: Vec<&str> = vec!{"some", "random", "words", "go", "here"};
+        let r_words = get_random_words(&words, 2);
+        assert_eq!(r_words.len(), 2);
+        assert!(words.contains(&&*r_words[0]));
+        assert!(words.contains(&&*r_words[1]));
+    }
+}
