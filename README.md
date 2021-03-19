@@ -1,3 +1,4 @@
+![rust workflow](https://github.com/swilcox/rpwdgen/actions/workflows/rust.yml/badge.svg)
 # rpwdgen
 Rust-based password/passphrase generator
 
