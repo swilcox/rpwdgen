@@ -23,7 +23,7 @@ fn get_random_words<T: ToString>(word_list: &Vec<T>, num_words: usize) -> Vec<St
     (0..num_words).map(|_| word_list[rng.gen_range(0..word_list.len())].to_string()).collect()
 }
 
-fn make_passphrase(input_filename: String, separator: String, num_words: usize, capitalize: usize, max_num: i32) {
+fn make_passphrase(input_filename: String, separator: String, num_words: usize, capitalize: usize, max_num: i32) -> String {
     let mut word_list: Vec<String> = Vec::new();
     if input_filename != "" {
         let reader = BufReader::new(File::open(input_filename).expect("Cannot open file."));
@@ -42,7 +42,7 @@ fn make_passphrase(input_filename: String, separator: String, num_words: usize, 
 
     let mut rng = rand::thread_rng();
     let extra_number = if max_num > 0 {rng.gen_range(0..=max_num).to_string()} else {"".to_string()};
-    println!("{}{}", phrase_words.join(&separator), extra_number);
+    return phrase_words.join(&separator) + &extra_number.to_string();
 }
 
 fn print_usage(program: &str, opts: Options) {
@@ -77,7 +77,7 @@ fn main() {
     let max_num = matches.opt_get_default("n", 9).unwrap();
     
     // call the actual program
-    make_passphrase(input_filename, separator, num_words, capitalize, max_num);
+    println!("{}", make_passphrase(input_filename, separator, num_words, capitalize, max_num));
 }
 
 #[cfg(test)]
@@ -91,5 +91,16 @@ mod tests {
         assert_eq!(r_words.len(), 2);
         assert!(words.contains(&&*r_words[0]));
         assert!(words.contains(&&*r_words[1]));
+    }
+
+    #[test]
+    fn test_make_passphrase() {
+        let passphrase = make_passphrase("".to_string(), "-".to_string(), 4, 1, 9);
+        // verify there are 4 words separated by separator string
+        assert_eq!(passphrase.split('-').collect::<Vec<&str>>().len(), 4);
+        // verify first character is capitalized
+        assert!(passphrase.as_str().chars().next().unwrap().is_uppercase());
+        // verify last character is a number
+        assert!(passphrase.as_str().chars().last().unwrap().is_digit(10));        
     }
 }
