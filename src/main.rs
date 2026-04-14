@@ -12,6 +12,7 @@ use wordlist::default_word_list;
 
 fn some_kind_of_uppercase_first_letter(s: &str) -> String {
     let mut c = s.chars();
+    
     match c.next() {
         None => String::new(),
         Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
@@ -19,8 +20,8 @@ fn some_kind_of_uppercase_first_letter(s: &str) -> String {
 }
 
 fn get_random_words<T: ToString>(word_list: &Vec<T>, num_words: usize) -> Vec<String> {
-    let mut rng = rand::thread_rng();
-    (0..num_words).map(|_| word_list[rng.gen_range(0..word_list.len())].to_string()).collect()
+    let mut rng = rand::rng();
+    (0..num_words).map(|_| word_list[rng.random_range(0..word_list.len())].to_string()).collect()
 }
 
 fn make_passphrase(input_filename: String, separator: String, num_words: usize, capitalize: usize, max_num: i32) -> String {
@@ -40,8 +41,8 @@ fn make_passphrase(input_filename: String, separator: String, num_words: usize, 
         phrase_words[capitalize - 1] = some_kind_of_uppercase_first_letter(&phrase_words[capitalize - 1]);
     }
 
-    let mut rng = rand::thread_rng();
-    let extra_number = if max_num > 0 {rng.gen_range(0..=max_num).to_string()} else {"".to_string()};
+    let mut rng = rand::rng();
+    let extra_number = if max_num > 0 {rng.random_range(0..=max_num).to_string()} else {"".to_string()};
     return phrase_words.join(&separator) + &extra_number.to_string();
 }
 
@@ -63,7 +64,7 @@ fn main() {
     opts.optflag("h", "help", "print this help menu");
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
-        Err(f) => { panic!(f.to_string()) }
+        Err(f) => { panic!("{}", f.to_string()) }
     };
     if matches.opt_present("h") {
         print_usage(&program, opts);
